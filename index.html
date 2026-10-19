@@ -1,0 +1,642 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Kenar Düellosu Vitrini</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700;800&display=swap">
+<style>
+/* Layout: arcade poster — a live bot match in a hazard-taped TV up top, then colourful comic bands that each show one part of the game drawn by its own engine */
+:root{
+  --night:#170f36; --night2:#22184f; --plate:#2e2a5c; --plate2:#25204b; --edge:#0b0814;
+  --ink:#fff8e8; --mute:#bdb6e0; --hazard:#ffc531; --gold:#f0b419; --goldTop:#ffd65a;
+  --blue:#4aa3ff; --red:#ff5a5a; --green:#5fd36a; --purple:#c98bff; --orange:#ff8a3d; --teal:#3fd6d0; --pink:#ff7ab8;
+  --paper:#ffd96a; --paperTop:#ffe794; --paperInk:#2b230f;
+  --go:#3fb04c; --goTop:#6fdc7a;
+  --f-display:"Bungee", Impact, "Arial Black", system-ui, sans-serif;
+  --f-body:"Rubik", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --outline:0 2px 0 var(--edge),2px 0 0 var(--edge),-2px 0 0 var(--edge),0 -2px 0 var(--edge),2px 2px 0 var(--edge),-2px 2px 0 var(--edge),2px -2px 0 var(--edge),-2px -2px 0 var(--edge),0 5px 0 var(--edge);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{background:var(--night);color:var(--ink)}
+body{margin:0;font-family:var(--f-body);font-size:16px;line-height:1.55;overflow-x:hidden;
+  background:
+    radial-gradient(900px 500px at 85% -5%,rgba(255,138,61,.35),transparent 60%),
+    radial-gradient(800px 600px at -10% 20%,rgba(201,139,255,.28),transparent 60%),
+    radial-gradient(rgba(255,255,255,.05) 1.2px,transparent 1.6px) 0 0/22px 22px,
+    var(--night)}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--hazard);outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ic{width:1.1em;height:1.1em;flex:none}
+
+/* ---------- shared pieces from the game UI ---------- */
+.btn{--bg:#3b3f66;--top:#545a8c;--txt:var(--ink);
+  font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.03em;color:var(--txt);text-decoration:none;
+  display:inline-flex;align-items:center;gap:10px;justify-content:center;
+  background:linear-gradient(180deg,var(--top),var(--bg));border:3px solid var(--edge);border-radius:14px;
+  box-shadow:0 5px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.28),inset 0 -3px 0 rgba(0,0,0,.18);
+  padding:12px 22px;min-height:52px;text-shadow:0 2px 0 rgba(0,0,0,.4);transition:transform .07s,box-shadow .07s,filter .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.28)}
+.btn.green{--bg:var(--go);--top:var(--goTop)}
+.btn.yellow{--bg:var(--gold);--top:var(--goldTop);--txt:#2a1e05;text-shadow:none}
+.btn.red{--bg:#d8402f;--top:#f26a5c}
+.btn.sm{font-size:13px;min-height:40px;padding:6px 14px;border-radius:11px;box-shadow:0 3px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.25)}
+.plate{background:linear-gradient(180deg,var(--plate),var(--plate2));border:3px solid var(--edge);border-radius:18px;
+  box-shadow:0 7px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.1);position:relative}
+.plate.bolts::after{content:"";position:absolute;inset:8px;pointer-events:none;
+  background:
+    radial-gradient(circle,#a7a2d0 0 1.8px,#3d3870 2.3px,transparent 2.9px) left top/7px 7px no-repeat,
+    radial-gradient(circle,#a7a2d0 0 1.8px,#3d3870 2.3px,transparent 2.9px) right top/7px 7px no-repeat,
+    radial-gradient(circle,#a7a2d0 0 1.8px,#3d3870 2.3px,transparent 2.9px) left bottom/7px 7px no-repeat,
+    radial-gradient(circle,#a7a2d0 0 1.8px,#3d3870 2.3px,transparent 2.9px) right bottom/7px 7px no-repeat}
+.paper{background:linear-gradient(180deg,var(--paperTop),var(--paper));color:var(--paperInk);border:3px solid var(--edge);border-radius:16px;
+  box-shadow:0 7px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.55);position:relative}
+.tape{height:20px;border:3px solid var(--edge);border-radius:5px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 14px,#1b1b1b 14px 28px);box-shadow:0 4px 0 var(--edge)}
+.peg{background:#d3cdbe radial-gradient(circle,rgba(40,30,10,.22) 1.5px,transparent 2px) 0 0/16px 16px;border:3px solid var(--edge);border-radius:14px;box-shadow:inset 0 0 0 3px #ebe6d8,0 6px 0 var(--edge)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:12px;letter-spacing:.04em;text-transform:uppercase;border:2px solid var(--edge);border-radius:999px;padding:3px 10px;background:rgba(0,0,0,.25)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- section headings ---------- */
+section{padding-block:64px 24px;scroll-margin-top:72px}
+.head{display:flex;align-items:center;gap:16px;margin-bottom:26px;flex-wrap:wrap}
+.head h2{margin:0;font-family:var(--f-display);font-weight:400;font-size:clamp(28px,5.5vw,46px);line-height:1.05;letter-spacing:.02em;color:var(--ink);text-shadow:var(--outline);text-wrap:balance}
+.head .rail{flex:1;min-width:60px;height:16px;border:3px solid var(--edge);border-radius:6px;background:repeating-linear-gradient(-45deg,var(--c,var(--hazard)) 0 12px,#1b1b1b 12px 24px);box-shadow:0 3px 0 var(--edge)}
+.lede{max-width:62ch;font-size:18px;color:var(--mute);margin:-12px 0 26px;font-weight:500}
+
+/* ---------- nav ---------- */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(23,15,54,.82);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:3px solid var(--edge)}
+.nav .wrap{display:flex;align-items:center;gap:18px;min-height:64px}
+.brand{font-family:var(--f-display);font-size:20px;text-decoration:none;color:var(--hazard);text-shadow:0 2px 0 var(--edge),2px 0 0 var(--edge),-2px 0 0 var(--edge),0 -2px 0 var(--edge);white-space:nowrap}
+.brand span{color:var(--ink)}
+.links{display:flex;gap:4px;margin-left:auto}
+.links a{text-decoration:none;font-weight:800;font-size:14px;padding:8px 10px;border-radius:10px;color:var(--mute)}
+.links a:hover{color:var(--ink);background:rgba(255,255,255,.08)}
+
+/* ---------- hero ---------- */
+.hero{padding-block:44px 30px}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.25fr);gap:40px;align-items:center}
+.logo{margin:0;font-family:var(--f-display);font-weight:400;line-height:.86;font-size:clamp(54px,9.5vw,118px);display:flex;flex-direction:column;transform:rotate(-4deg);transform-origin:left center}
+.logo span{text-shadow:0 4px 0 var(--edge),4px 0 0 var(--edge),-4px 0 0 var(--edge),0 -4px 0 var(--edge),4px 4px 0 var(--edge),-4px 4px 0 var(--edge),4px -4px 0 var(--edge),-4px -4px 0 var(--edge),0 9px 0 var(--edge),0 13px 0 rgba(0,0,0,.35)}
+.logo .l1{color:var(--hazard)}
+.logo .l2{color:var(--ink);font-size:.76em;margin-top:.1em}
+.hero .tape{width:min(100%,480px);margin:24px 0 0;transform:rotate(-4deg);transform-origin:left}
+.tagline{font-size:clamp(19px,2.4vw,23px);font-weight:700;margin:30px 0 10px;max-width:30ch;text-shadow:0 2px 0 var(--edge)}
+.sub{color:var(--mute);margin:0 0 24px;max-width:46ch;font-weight:500}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.badges .chip:nth-child(1){background:var(--blue);color:#06233f}
+.badges .chip:nth-child(2){background:var(--green);color:#0b2a0f}
+.badges .chip:nth-child(3){background:var(--pink);color:#3a0b22}
+.badges .chip:nth-child(4){background:var(--orange);color:#3a1a05}
+.tv{padding:10px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 16px,#1b1b1b 16px 32px);border:3px solid var(--edge);border-radius:22px;box-shadow:0 9px 0 var(--edge);transform:rotate(1.2deg)}
+.tv .screen{position:relative;aspect-ratio:16/9;max-width:100%;border:3px solid var(--edge);border-radius:14px;overflow:hidden;background:#11121c}
+.tv canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.tv .live{position:absolute;left:10px;top:10px;display:flex;gap:6px;align-items:center;z-index:2}
+.tv .live b{background:#e8382c;color:#fff;font-family:var(--f-display);font-weight:400;font-size:12px;border:2px solid var(--edge);border-radius:8px;padding:2px 8px;display:flex;align-items:center;gap:6px}
+.tv .live b::before{content:"";width:8px;height:8px;border-radius:50%;background:#fff;animation:blink 1s steps(2) infinite}
+.tv .live span{background:rgba(11,8,20,.8);border:2px solid var(--edge);border-radius:8px;padding:2px 8px;font-weight:800;font-size:12px}
+.tv .toggle{position:absolute;right:10px;top:10px;z-index:2;width:38px;height:34px;border-radius:9px;border:2px solid var(--edge);background:rgba(11,8,20,.8);display:grid;place-items:center}
+@keyframes blink{50%{opacity:0}}
+.lineup{display:flex;justify-content:center;gap:clamp(4px,2vw,22px);margin-top:34px;flex-wrap:wrap}
+.lineup canvas{width:clamp(70px,11vw,118px);height:auto;aspect-ratio:1;filter:drop-shadow(0 6px 0 rgba(11,8,20,.6));animation:bob 2.6s ease-in-out infinite}
+.lineup canvas:nth-child(2n){animation-delay:-.7s}.lineup canvas:nth-child(3n){animation-delay:-1.4s}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-2deg)}}
+
+/* ---------- stats band ---------- */
+.band{margin-top:40px;background:var(--blue);border-block:4px solid var(--edge);transform:rotate(-1.4deg);padding-block:18px}
+.band .wrap{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px}
+.stat{text-align:center;background:var(--c);border:3px solid var(--edge);border-radius:16px;box-shadow:0 5px 0 var(--edge);padding:10px 6px;transform:rotate(var(--r,0deg))}
+.stat b{display:block;font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4.4vw,44px);line-height:1;color:#fff;text-shadow:var(--outline)}
+.stat span{font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--edge)}
+
+/* ---------- how to ---------- */
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.how{padding:18px 18px 20px;transform:rotate(var(--r,0deg))}
+.how .num{position:absolute;top:-18px;left:-10px;width:46px;height:46px;border-radius:50%;background:var(--c);border:3px solid var(--edge);box-shadow:0 4px 0 var(--edge);display:grid;place-items:center;font-family:var(--f-display);font-size:22px;color:#fff;text-shadow:0 2px 0 var(--edge)}
+.how canvas{display:block;width:100%;height:auto;aspect-ratio:2/1;border-radius:10px;border:3px solid var(--edge);background:#1b1f3a;margin-bottom:12px}
+.how h3{margin:0 0 6px;font-family:var(--f-display);font-weight:400;font-size:22px}
+.how p{margin:0;font-weight:500}
+
+/* ---------- modes ---------- */
+.modes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.mode{background:var(--c);color:var(--edge);border:3px solid var(--edge);border-radius:18px;box-shadow:0 6px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.4);padding:16px;position:relative;overflow:hidden;transition:transform .15s}
+.mode:hover{transform:translateY(-4px) rotate(-1deg)}
+.mode::after{content:"";position:absolute;right:-30px;bottom:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.18)}
+.mode .mi{width:46px;height:46px;border-radius:12px;background:rgba(11,8,20,.85);color:var(--c);display:grid;place-items:center;border:2px solid var(--edge);margin-bottom:10px}
+.mode .mi .ic{width:26px;height:26px}
+.mode h3{margin:0 0 6px;font-family:var(--f-display);font-weight:400;font-size:20px;color:#fff;text-shadow:var(--outline)}
+.mode p{margin:0;font-weight:600;font-size:15px;position:relative;z-index:1}
+
+/* ---------- weapons ---------- */
+.arsenal{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:20px;align-items:start}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.tabs button{font-family:var(--f-display);font-size:13px;background:linear-gradient(180deg,#454a7c,#2e2a5c);border:3px solid var(--edge);border-radius:12px;box-shadow:0 3px 0 var(--edge);padding:6px 12px;min-height:42px;text-shadow:0 2px 0 var(--edge);display:flex;gap:6px;align-items:center}
+.tabs button small{font-family:var(--f-body);font-weight:800;font-size:11px;background:rgba(0,0,0,.35);border-radius:999px;padding:1px 7px;text-shadow:none}
+.tabs button[aria-pressed="true"]{background:linear-gradient(180deg,var(--goldTop),var(--gold));color:#2a1e05;text-shadow:none}
+.guns{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px;padding:10px}
+.gun{background:transparent;border:3px solid transparent;border-radius:12px;padding:4px;display:flex;flex-direction:column;align-items:center;gap:0}
+.gun canvas{width:100%;height:auto;aspect-ratio:150/66}
+.gun span{font-size:12px;font-weight:800;color:#2a2416}
+.gun:hover{background:rgba(255,255,255,.4)}
+.gun[aria-pressed="true"]{background:rgba(255,213,90,.8);border-color:var(--edge)}
+.gdetail{padding:18px}
+.gdetail h3{margin:0 0 10px;font-family:var(--f-display);font-weight:400;font-size:26px;text-shadow:0 3px 0 var(--edge)}
+.gdetail .peg{display:grid;place-items:center;margin-bottom:14px}
+.gdetail .peg canvas{width:100%;height:auto;aspect-ratio:21/8}
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:90px minmax(0,1fr);gap:10px;align-items:center;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.04em}
+.bar span{color:var(--mute)}
+.bar i{height:13px;background:#15121f;border:2px solid var(--edge);border-radius:999px;overflow:hidden}
+.bar b{display:block;height:100%;background:linear-gradient(180deg,#ffe08a,var(--gold));border-radius:999px;transition:width .3s}
+.notes{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.notes i{font-style:normal;font-size:12px;font-weight:800;background:rgba(0,0,0,.3);border-radius:999px;padding:3px 10px;color:var(--mute)}
+
+/* ---------- maps ---------- */
+.maps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.map{padding:10px 10px 14px;transition:transform .15s}
+.map:hover{transform:translateY(-4px)}
+.map:nth-child(3n+1){transform:rotate(-.8deg)}.map:nth-child(3n+2){transform:rotate(.6deg)}
+.map canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;border:3px solid var(--edge);border-radius:12px;margin-bottom:10px}
+.map h3{margin:0 4px 6px;font-family:var(--f-display);font-weight:400;font-size:18px;text-shadow:0 2px 0 var(--edge)}
+.map .tags{display:flex;gap:5px;flex-wrap:wrap;margin:0 4px 8px}
+.map .tags i{font-style:normal;font-size:11px;font-weight:800;border:2px solid var(--edge);border-radius:999px;padding:1px 8px;background:var(--c);color:var(--edge)}
+.map p{margin:0 4px;font-size:14px;color:var(--mute);font-weight:500}
+
+/* ---------- builder ---------- */
+.builder{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:center;padding:22px}
+.stage{position:relative;aspect-ratio:1;max-width:420px;width:100%;margin:0 auto;border-radius:50%;
+  background:radial-gradient(circle at 50% 60%,rgba(255,255,255,.22),rgba(255,255,255,0) 62%),conic-gradient(from 0deg,var(--blue),var(--purple),var(--pink),var(--orange),var(--hazard),var(--green),var(--teal),var(--blue));
+  border:4px solid var(--edge);box-shadow:0 8px 0 var(--edge)}
+.stage canvas{position:absolute;inset:6%;width:88%;height:88%}
+.controls{display:grid;gap:10px}
+.ctrl{display:grid;grid-template-columns:110px auto minmax(0,1fr) auto;gap:10px;align-items:center;background:rgba(0,0,0,.22);border:2px solid var(--edge);border-radius:12px;padding:6px 8px}
+.ctrl > span{font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute)}
+.ctrl b{text-align:center;font-family:var(--f-display);font-weight:400;font-size:15px}
+.ctrl button{width:40px;height:40px;border-radius:10px;border:3px solid var(--edge);background:linear-gradient(180deg,#545a8c,#3b3f66);box-shadow:0 3px 0 var(--edge);font-family:var(--f-display);font-size:18px}
+.ctrl button:active{transform:translateY(2px);box-shadow:0 1px 0 var(--edge)}
+.swatches{display:flex;gap:6px;flex-wrap:wrap;grid-column:2 / 5}
+.sw{width:34px;height:34px;border-radius:50%;background:var(--c);border:3px solid var(--edge);box-shadow:0 2px 0 var(--edge),inset 0 2px 0 rgba(255,255,255,.45)}
+.sw[aria-pressed="true"]{outline:3px solid var(--ink);outline-offset:2px}
+
+/* ---------- bots ---------- */
+.bots{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.bot{padding:16px}
+.bot h3{margin:0 0 10px;font-family:var(--f-display);font-weight:400;font-size:20px;color:var(--c);text-shadow:var(--outline)}
+.bot .bars{gap:6px}
+.bot .bar{grid-template-columns:78px minmax(0,1fr)}
+.bot .bar b{background:linear-gradient(180deg,#fff,var(--c))}
+.botnote{margin-top:18px;padding:16px 18px;font-weight:600}
+
+/* ---------- campaign ---------- */
+.road{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px}
+.stop{position:relative;padding:10px 8px 12px;text-align:center;border-radius:14px;border:3px solid var(--edge);box-shadow:0 5px 0 var(--edge);background:linear-gradient(180deg,#3d3870,#2a2556)}
+.stop .n{width:38px;height:38px;margin:0 auto 6px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:16px;border:3px solid var(--edge);background:var(--c);color:#fff;text-shadow:0 2px 0 var(--edge)}
+.stop span{display:block;font-weight:800;font-size:12px;line-height:1.2}
+.stop.boss{background:linear-gradient(180deg,var(--goldTop),var(--gold));color:#2a1e05}
+.chals{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px;margin-top:22px}
+.chal{padding:12px 14px;display:flex;align-items:center;gap:12px}
+.chal canvas{width:84px;height:auto;aspect-ratio:2/1;flex:none;background:#d3cdbe;border:2px solid var(--edge);border-radius:8px}
+.chal b{display:block;font-family:var(--f-display);font-weight:400;font-size:14px;line-height:1.2}
+.chal span{font-size:12px;font-weight:800;color:#5a4a20}
+
+/* ---------- phone ---------- */
+.phone{display:grid;grid-template-columns:auto minmax(0,1fr) minmax(0,1fr);gap:22px;align-items:start;padding:22px}
+.qr{background:#fff;border:3px solid var(--edge);border-radius:16px;padding:12px;box-shadow:0 6px 0 var(--edge);width:200px;max-width:100%}
+.qr #qr{width:170px;height:170px;max-width:100%}
+.qr #qr img,.qr #qr canvas{width:100%!important;height:auto!important;display:block}
+.qr p{margin:8px 0 0;color:#2a1e05;font-weight:800;font-size:13px;text-align:center}
+.phone h3{margin:0 0 8px;font-family:var(--f-display);font-weight:400;font-size:20px}
+.phone ol{margin:0;padding-left:20px;display:grid;gap:6px;font-weight:500}
+.keys{display:grid;gap:8px}
+.keys div{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-weight:600;font-size:14px}
+kbd{font-family:var(--f-body);font-weight:800;font-size:12px;background:#fff8e0;color:var(--paperInk);border:2px solid var(--edge);border-bottom-width:4px;border-radius:7px;padding:1px 7px}
+.linkbox{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.linkbox code{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(0,0,0,.35);border:2px solid var(--edge);border-radius:10px;padding:8px 10px;font-size:13px;user-select:all}
+
+/* ---------- final call ---------- */
+.final{margin-top:60px;background:var(--red);border-block:4px solid var(--edge);padding-block:44px;text-align:center;position:relative;overflow:hidden}
+.final::before,.final::after{content:"";position:absolute;left:-5%;right:-5%;height:22px;background:repeating-linear-gradient(-45deg,var(--hazard) 0 14px,#1b1b1b 14px 28px);border-block:3px solid var(--edge)}
+.final::before{top:10px;transform:rotate(-1deg)}.final::after{bottom:10px;transform:rotate(1deg)}
+.final h2{margin:18px 0 10px;font-family:var(--f-display);font-weight:400;font-size:clamp(34px,7vw,64px);color:#fff;text-shadow:var(--outline);text-wrap:balance}
+.final p{margin:0 auto 24px;max-width:46ch;font-weight:700;font-size:18px;color:#fff;text-shadow:0 2px 0 var(--edge)}
+footer{padding-block:28px calc(28px + env(safe-area-inset-bottom,0px));color:var(--mute);font-size:14px;text-align:center}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .hero .wrap,.arsenal,.builder,.phone{grid-template-columns:minmax(0,1fr)}
+  .bots{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .road{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .band .wrap{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .tv{transform:none}
+}
+@media (max-width:680px){
+  .links a:not(.keep){display:none}
+  .steps3{grid-template-columns:minmax(0,1fr);gap:30px}
+  .bots{grid-template-columns:minmax(0,1fr)}
+  .road{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .band .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ctrl{grid-template-columns:84px auto minmax(0,1fr) auto}
+  section{padding-block:48px 16px}
+  .btn{font-size:15px;padding:10px 16px}
+}
+@media (prefers-reduced-motion:reduce){
+  .lineup canvas,.tv .live b::before{animation:none}
+  .mode,.map,.btn{transition:none}
+}
+</style>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top">Kenar <span>Düellosu</span></a>
+    <nav class="links" aria-label="Bölümler">
+      <a href="#nasil">Nasıl oynanır</a><a href="#modlar">Modlar</a><a href="#silahlar">Silahlar</a><a href="#haritalar">Haritalar</a><a href="#telefon">Telefonda</a>
+      <a class="btn green sm keep" href="https://claude.ai/artifact/CRZxU7C8ouLQ4KYRa8CWxw" target="_blank" rel="noopener">Oyna</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" aria-label="Tanıtım">
+    <div class="wrap">
+      <div>
+        <h1 class="logo"><span class="l1">Kenar</span><span class="l2">Düellosu</span></h1>
+        <div class="tape" aria-hidden="true"></div>
+        <p class="tagline">Silahını kap, rakibini kirişlerden aşağı it. Son ayakta kalan kazanır.</p>
+        <p class="sub">Dört kişiye kadar oynanan, telefonda ve bilgisayarda çalışan bir platform düellosu. Mermiler can götürür ama asıl işi iter; ekranın dışına düşen bir hak kaybeder.</p>
+        <div class="ctas">
+          <a class="btn green" href="https://claude.ai/artifact/CRZxU7C8ouLQ4KYRa8CWxw" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>Tarayıcıda oyna</a>
+          <a class="btn yellow" href="#telefon"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18h2"/></svg>Telefona kur</a>
+        </div>
+        <div class="badges"><span class="chip">Ücretsiz</span><span class="chip">Telefon ve bilgisayar</span><span class="chip">4 oyuncuya kadar</span><span class="chip">Akıllı botlar</span></div>
+      </div>
+      <div>
+        <div class="tv">
+          <div class="screen">
+            <canvas id="demo" aria-label="Botların oynadığı canlı bir maç"></canvas>
+            <div class="live"><b>Canlı</b><span id="demoMap">İnşaat Alanı</span></div>
+            <button class="toggle" id="demoToggle" type="button" aria-label="Canlı maçı duraklat"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M8.5 5v14M15.5 5v14"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="wrap"><div class="lineup" id="lineup" aria-label="Oyundan karakterler"></div></div>
+    <div class="band" aria-label="Oyunda neler var">
+      <div class="wrap" id="stats"></div>
+    </div>
+  </section>
+
+  <section id="nasil">
+    <div class="wrap">
+      <div class="head"><h2>Nasıl oynanır</h2><span class="rail" style="--c:var(--green)"></span></div>
+      <div class="steps3">
+        <article class="paper how" style="--r:-1.2deg;--c:var(--blue)"><span class="num">1</span><canvas id="how1" width="360" height="180"></canvas><h3>Vur ve it</h3><p>Her isabet rakibi geri iter ve canından götürür. Canı azaldıkça daha uzağa savrulur.</p></article>
+        <article class="paper how" style="--r:.8deg;--c:var(--red)"><span class="num">2</span><canvas id="how2" width="360" height="180"></canvas><h3>Dinamiti nişanla</h3><p>Dinamit tuşunu basılı tut; çizgi nereye düşeceğini gösterir. Bırakınca fırlar, fitil bitince patlar.</p></article>
+        <article class="paper how" style="--r:-.6deg;--c:var(--purple)"><span class="num">3</span><canvas id="how3" width="360" height="180"></canvas><h3>Kenardan düşür</h3><p>Ekranın dışına düşen ya da canı biten bir hak kaybeder. Gökten düşen sandıklar yeni silah verir.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="modlar">
+    <div class="wrap">
+      <div class="head"><h2>7 oyun modu</h2><span class="rail" style="--c:var(--pink)"></span></div>
+      <p class="lede">Arkadaşlarınla aynı klavyede ya da oyun kollarıyla, bilgisayara karşı ya da karışık oyna.</p>
+      <div class="modes" id="modes"></div>
+    </div>
+  </section>
+
+  <section id="silahlar">
+    <div class="wrap">
+      <div class="head"><h2>60 silahlık cephanelik</h2><span class="rail" style="--c:var(--orange)"></span></div>
+      <p class="lede">Tabancadan minigun’a, lazerden tek vuruşta yok eden Buharlaştırıcı’ya. Her silahın gücü, hızı, şarjörü, ağırlığı ve geri tepmesi farklı.</p>
+      <div class="arsenal">
+        <div>
+          <div class="tabs" id="gunTabs" role="group" aria-label="Silah türü"></div>
+          <div class="peg guns" id="guns"></div>
+        </div>
+        <div class="plate bolts gdetail" id="gunDetail" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="haritalar">
+    <div class="wrap">
+      <div class="head"><h2>12 özgün harita</h2><span class="rail" style="--c:var(--teal)"></span></div>
+      <p class="lede">Her haritanın kendi oyunu var: akan trafik, kalkan asma köprü, kum fırtınası, kapanan enerji köprüleri, zıplatan tenteler...</p>
+      <div class="maps" id="maps"></div>
+    </div>
+  </section>
+
+  <section id="karakter">
+    <div class="wrap">
+      <div class="head"><h2>Karakterini yarat</h2><span class="rail" style="--c:var(--purple)"></span></div>
+      <div class="plate bolts builder">
+        <div class="stage"><canvas id="builder" width="440" height="440" aria-label="Seçtiğin karakter"></canvas></div>
+        <div class="controls" id="controls"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="botlar">
+    <div class="wrap">
+      <div class="head"><h2>Rakiplerin akıllı</h2><span class="rail" style="--c:var(--red)"></span></div>
+      <p class="lede">Botlar haritayı okur: hangi platforma nasıl zıplayacaklarını hesaplar, düşerken kurtulmanın yolunu bulur, mermiden ve dinamitten kaçar, seni kenara doğru itecek tarafta durur.</p>
+      <div class="bots" id="bots"></div>
+    </div>
+  </section>
+
+  <section id="senaryo">
+    <div class="wrap">
+      <div class="head"><h2>16 görevlik senaryo</h2><span class="rail" style="--c:var(--hazard)"></span></div>
+      <p class="lede">Eğitimle başla, Görünmez Adam’la, Pompalı Çetesi’yle ve Mini Rakip’le savaş, Son Sınav’ı geçip Altın Tabanca’yı aç. Görevleri ikinci bir oyuncuyla birlikte de oynayabilirsin.</p>
+      <div class="road" id="road"></div>
+      <div class="chals" id="chals"></div>
+    </div>
+  </section>
+
+  <section id="telefon">
+    <div class="wrap">
+      <div class="head"><h2>Telefonunda oyna</h2><span class="rail" style="--c:var(--blue)"></span></div>
+      <div class="plate bolts phone">
+        <div class="qr"><div id="qr" role="img" aria-label="Oyunun bağlantısına giden karekod"></div><p>Kamerayla okut</p></div>
+        <div>
+          <h3>Kurulum gerektirmez</h3>
+          <ol>
+            <li>Karekodu telefonunun kamerasıyla okut ya da bağlantıyı aç.</li>
+            <li>Telefonu yan çevir. Oyun tüm ekranı kaplar.</li>
+            <li>Solda kaydırarak yürü, sağdaki tuşlarla zıpla, ateş et ve dinamit at.</li>
+          </ol>
+          <p class="sub" style="margin:12px 0 0">Android için bir APK sürümü de var; telefona uygulama olarak kurulur ve internetsiz çalışır.</p>
+          <div class="linkbox"><code id="link">https://claude.ai/artifact/CRZxU7C8ouLQ4KYRa8CWxw</code><button class="btn sm yellow" id="copy" type="button">Kopyala</button></div>
+        </div>
+        <div>
+          <h3>Kontroller</h3>
+          <div class="keys">
+            <div><b>Dokunmatik:</b> sol tarafta kaydır · Zıpla · Ateş · Dinamit</div>
+            <div><b>1. oyuncu:</b> <kbd>←</kbd><kbd>→</kbd> yürü <kbd>↑</kbd> zıpla <kbd>↓</kbd> in <kbd>Z</kbd> ateş <kbd>X</kbd> dinamit</div>
+            <div><b>2. oyuncu:</b> <kbd>A</kbd><kbd>D</kbd> yürü <kbd>W</kbd> zıpla <kbd>S</kbd> in <kbd>T</kbd> ateş <kbd>Y</kbd> dinamit</div>
+            <div><b>Oyun kolu:</b> 3. ve 4. oyuncu için. A zıpla, X ateş, B dinamit.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="final">
+    <div class="wrap">
+      <h2>Kirişler seni bekliyor</h2>
+      <p>Bir maç iki dakika sürer. Arkadaşlarını çağır, botları seç, ilk düşen çay ısmarlar.</p>
+      <a class="btn yellow" href="https://claude.ai/artifact/CRZxU7C8ouLQ4KYRa8CWxw" target="_blank" rel="noopener"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="currentColor"/></svg>Hemen oyna</a>
+    </div>
+  </div>
+</main>
+<footer><div class="wrap">Kenar Düellosu · sitedeki tüm görseller oyunun kendi çizim motoruyla canlı olarak çiziliyor.</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="data.js"></script>
+<script src="gunart.js"></script>
+<script src="game.js"></script>
+<script>
+(() => {
+"use strict";
+const K = window.K, $ = id => document.getElementById(id);
+const GAME_URL = 'https://claude.ai/artifact/CRZxU7C8ouLQ4KYRa8CWxw';
+K.settings.sound = false;
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const svg = p => `<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const IC = {
+  lms: '<path d="M3 18.5h18l-1.6-10-4.9 4L12 5.5l-2.5 7-4.9-4z"/>',
+  team: '<circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="8" r="3"/><path d="M2 20c0-3.4 2.7-6 6-6s6 2.6 6 6M11 20c0-3.4 2.4-6 5.5-6s5.5 2.6 5.5 6"/>',
+  survival: '<rect x="5" y="8" width="14" height="11" rx="2.5"/><path d="M12 4v4M9.5 13h.01M14.5 13h.01M9 16.5h6"/>',
+  onehit: '<path d="M13.5 2.5L5 14h6l-1 7.5L18.5 10h-6z"/>',
+  gungame: '<path d="M5 15l7-7 7 7M5 20.5l7-7 7 7"/>',
+  gungamer: '<path d="M5 3.5l7 7 7-7M5 9l7 7 7-7"/>',
+  jetpack: '<rect x="7.5" y="3" width="9" height="11" rx="3.5"/><path d="M10 14l-1.2 6.5M14 14l1.2 6.5"/>',
+};
+const MODE_COL = { lms: '#ffc531', team: '#4aa3ff', survival: '#ff5a5a', onehit: '#3fd6d0', gungame: '#5fd36a', gungamer: '#c98bff', jetpack: '#ff8a3d' };
+
+/* ---------- live demo match (the real engine, four bots) ---------- */
+const demo = $('demo'), dctx = demo.getContext('2d');
+const tourMaps = ['insaat', 'orman', 'teleferik', 'otoyol', 'kale', 'kanal', 'denizalti', 'col', 'kar', 'pazar', 'gemi', 'uzay'];
+let tour = 0, tourT = 0, playing = !reduce, visible = true, dw = 0, dh = 0, ddpr = 1;
+const looks = [
+  { color: 0, hat: 1, face: 0, outfit: 0 }, { color: 1, hat: 2, face: 1, outfit: 1 },
+  { color: 2, hat: 3, face: 2, outfit: 3 }, { color: 3, hat: 7, face: 3, outfit: 5 },
+];
+function startTour(i) {
+  const id = tourMaps[i % tourMaps.length];
+  K.newMatch({ mode: 'demo', map: id, lives: Infinity, crates: true, pickups: true,
+    slots: [0, 1, 2, 3].map(k => ({ type: 'ai', diff: k < 2 ? 'usta' : 'zor', team: k, cos: looks[k], gun: K.PISTOLS[k], lives: Infinity, name: ['Mavi', 'Kızıl', 'Yeşil', 'Mor'][k] })) });
+  $('demoMap').textContent = K.MAP[id].name;
+  tourT = 0;
+}
+function sizeDemo() {
+  const r = demo.getBoundingClientRect();
+  ddpr = Math.min(window.devicePixelRatio || 1, 2);
+  dw = Math.max(1, Math.round(r.width)); dh = Math.max(1, Math.round(r.height));
+  demo.width = Math.round(dw * ddpr); demo.height = Math.round(dh * ddpr);
+  K.clearBgCache();
+  K.render(dctx, dw, dh, ddpr);
+}
+new ResizeObserver(sizeDemo).observe(demo);
+new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(demo);
+let last = performance.now(), acc = 0;
+function frame(now) {
+  const dt = Math.min(.1, (now - last) / 1000); last = now;
+  if (playing && visible) {
+    acc += dt;
+    while (acc >= 1 / 60) { K.step(() => ({})); acc -= 1 / 60; }
+    tourT += dt;
+    if (tourT > 16) startTour(++tour);
+    K.render(dctx, dw, dh, ddpr);
+  }
+  requestAnimationFrame(frame);
+}
+$('demoToggle').addEventListener('click', () => {
+  playing = !playing;
+  $('demoToggle').innerHTML = playing ? svg('<path d="M8.5 5v14M15.5 5v14"/>') : svg('<path d="M8 5l11 7-11 7z" fill="currentColor"/>');
+  $('demoToggle').setAttribute('aria-label', playing ? 'Canlı maçı duraklat' : 'Canlı maçı oynat');
+});
+
+/* ---------- characters ---------- */
+function drawCharTo(cv, cos, gun, face = 1) {
+  const g = cv.getContext('2d'), s = cv.width / 80;
+  g.clearRect(0, 0, cv.width, cv.height);
+  g.fillStyle = 'rgba(0,0,0,.28)'; g.beginPath(); g.ellipse(cv.width / 2, 74 * s, 19 * s, 4 * s, 0, 0, 7); g.fill();
+  K.drawChar(g, { x: (face > 0 ? 36 : 44) * s, y: 6 * s, scale: 1.8 * s, face, color: K.COLORS[cos.color], cos, weapon: gun });
+}
+const lineupLooks = [
+  [{ color: 0, hat: 1, face: 0, outfit: 0 }, 'piyade', 1], [{ color: 1, hat: 2, face: 1, outfit: 1 }, 'kisanamlu', 1],
+  [{ color: 4, hat: 5, face: 4, outfit: 4 }, 'minigun', 1], [{ color: 2, hat: 3, face: 2, outfit: 3 }, 'atmaca', -1],
+  [{ color: 3, hat: 4, face: 3, outfit: 5 }, 'lazer', -1], [{ color: 5, hat: 6, face: 5, outfit: 2 }, 'bazuka', -1],
+];
+const lineup = $('lineup');
+lineupLooks.forEach(([cos, gun, f]) => { const c = document.createElement('canvas'); c.width = 240; c.height = 240; c.setAttribute('aria-hidden', 'true'); lineup.appendChild(c); drawCharTo(c, cos, gun, f); });
+
+/* ---------- stats ---------- */
+const stats = [
+  [K.WEAPONS.length, 'silah', 'var(--hazard)', '-3deg'], [K.MAPS.length, 'harita', 'var(--green)', '2deg'], [K.MODES.length, 'mod', 'var(--pink)', '-1deg'],
+  [K.CAMPAIGN.length, 'görev', 'var(--orange)', '3deg'], [K.PERKS.length - 1, 'yetenek', 'var(--purple)', '-2deg'], [4, 'oyuncu', 'var(--teal)', '1.5deg'],
+];
+$('stats').innerHTML = stats.map(([n, l, c, r]) => `<div class="stat" style="--c:${c};--r:${r}"><b>${n}</b><span>${l}</span></div>`).join('');
+
+/* ---------- how-to illustrations ---------- */
+function scene(cv, draw) {
+  const g = cv.getContext('2d'), w = cv.width, h = cv.height;
+  const sky = g.createLinearGradient(0, 0, 0, h); sky.addColorStop(0, '#2b2160'); sky.addColorStop(1, '#e0795a');
+  g.fillStyle = sky; g.fillRect(0, 0, w, h);
+  g.fillStyle = 'rgba(20,14,40,.6)'; for (let x = 0; x < w; x += 46) { const bh = 40 + (x * 37 % 60); g.fillRect(x, h - bh, 40, bh); }
+  // a girder to stand on
+  g.fillStyle = '#8b3425'; g.fillRect(20, 130, w - 120, 14); g.fillStyle = '#d9643f'; g.fillRect(20, 130, w - 120, 4);
+  g.strokeStyle = '#0b0814'; g.lineWidth = 2; g.strokeRect(20, 130, w - 120, 14);
+  draw(g, w, h);
+}
+scene($('how1'), g => {
+  K.drawChar(g, { x: 90, y: 54, scale: 2, face: 1, color: K.COLORS[0], cos: looks[0], weapon: 'kartal' });
+  g.strokeStyle = '#ffe08a'; g.lineWidth = 3; g.beginPath(); g.moveTo(150, 96); g.lineTo(200, 96); g.stroke();
+  K.drawChar(g, { x: 262, y: 48, scale: 2, face: -1, color: K.COLORS[1], cos: looks[1], weapon: 'klasik', hitT: 1 });
+  g.font = '400 20px Bungee, Impact'; g.lineWidth = 5; g.strokeStyle = '#0b0814'; g.fillStyle = '#ff6b5a'; g.strokeText('-15', 250, 40); g.fillText('-15', 250, 40);
+});
+scene($('how2'), g => {
+  K.drawChar(g, { x: 80, y: 54, scale: 2, face: 1, color: K.COLORS[2], cos: looks[2], weapon: null, charge: 1 });
+  for (let i = 0; i < 12; i++) { const t = i / 11, x = 100 + t * 170, y = 70 - Math.sin(t * Math.PI) * 50 + t * 50; g.fillStyle = i % 2 ? '#fff' : '#ffc531'; g.strokeStyle = '#0b0814'; g.lineWidth = 1.5; g.beginPath(); g.arc(x, y, 4.2 - t * 1.5, 0, 7); g.fill(); g.stroke(); }
+  g.save(); g.translate(280, 124); g.globalAlpha = .25; g.fillStyle = '#ff5a5a'; g.beginPath(); g.ellipse(0, 0, 52, 15, 0, 0, 7); g.fill(); g.globalAlpha = 1;
+  g.setLineDash([6, 5]); g.strokeStyle = '#ff5a5a'; g.lineWidth = 2.5; g.stroke(); g.setLineDash([]); g.restore();
+});
+scene($('how3'), g => {
+  K.drawChar(g, { x: 110, y: 54, scale: 2, face: 1, color: K.COLORS[3], cos: looks[3], weapon: 'piyade' });
+  g.save(); g.translate(300, 70); g.rotate(.7);
+  K.drawChar(g, { x: 0, y: 0, scale: 1.8, face: -1, color: K.COLORS[1], cos: looks[1], weapon: null });
+  g.restore();
+  g.font = '400 24px Bungee, Impact'; g.lineWidth = 6; g.strokeStyle = '#0b0814'; g.fillStyle = '#ffc531'; g.strokeText('KO!', 270, 34); g.fillText('KO!', 270, 34);
+});
+
+/* ---------- modes ---------- */
+$('modes').innerHTML = K.MODES.map(m => `<article class="mode" style="--c:${MODE_COL[m.id]}"><div class="mi">${svg(IC[m.id])}</div><h3>${esc(m.name)}</h3><p>${esc(m.desc)}</p></article>`).join('');
+
+/* ---------- weapons ---------- */
+let cat = 'tabanca', sel = 'klasik';
+function gunStats(wd) {
+  const power = wd.kind === 'demat' ? 1 : Math.min(1, (wd.kind === 'rocket' || wd.kind === 'arc' ? 1100 : wd.kb * wd.pellets) / 1500);
+  return [['Güç', power], ['Hasar', Math.min(1, (wd.kind === 'rocket' ? 40 : wd.kind === 'arc' ? 32 : wd.dmg * wd.pellets) / 60)],
+    ['Atış hızı', Math.min(1, (1 / wd.rate) / 20)], ['Şarjör', Math.min(1, Math.sqrt(wd.clip / 150))], ['Ağırlık', wd.weight / 3], ['Geri tepme', Math.min(1, wd.recoil / 420)]];
+}
+function gunNotes(wd) {
+  const n = [wd.auto ? 'Otomatik' : wd.burst ? wd.burst + '’lü seri' : 'Tek atış'];
+  if (wd.pellets > 1) n.push(wd.pellets + ' saçma');
+  if (wd.kind === 'rocket') n.push('Patlayıcı roket');
+  if (wd.kind === 'arc') n.push('Kavisli bomba');
+  if (wd.kind === 'laser') n.push('Anında isabet');
+  if (wd.kind === 'demat') n.push('Tek isabette yok eder');
+  if (wd.pierce) n.push('Delip geçer');
+  if (wd.spin) n.push('Isındıkça hızlanır');
+  n.push(wd.clip + ' mermi');
+  if (wd.cat === 'tabanca') n.push('Başlangıç silahı');
+  return n.map(x => `<i>${x}</i>`).join('');
+}
+function paintGun(cv, id) { const g = cv.getContext('2d'); g.clearRect(0, 0, cv.width, cv.height); K.drawGunFit(g, K.WEAP[id], cv.width, cv.height); }
+function renderTabs() {
+  $('gunTabs').innerHTML = K.CATS.map(c => `<button type="button" data-cat="${c.id}" aria-pressed="${c.id === cat}">${c.name}<small>${K.WEAPONS.filter(w => w.cat === c.id).length}</small></button>`).join('');
+}
+function renderGuns() {
+  const list = K.WEAPONS.filter(w => w.cat === cat);
+  if (!list.some(w => w.id === sel)) sel = list[0].id;
+  $('guns').innerHTML = list.map(w => `<button class="gun" type="button" data-gun="${w.id}" aria-pressed="${w.id === sel}"><canvas width="210" height="92" aria-hidden="true"></canvas><span>${esc(w.name)}</span></button>`).join('');
+  $('guns').querySelectorAll('.gun').forEach(b => paintGun(b.querySelector('canvas'), b.dataset.gun));
+  renderDetail();
+}
+function renderDetail() {
+  const wd = K.WEAP[sel];
+  $('gunDetail').innerHTML = `<h3>${esc(wd.name)}</h3><div class="peg"><canvas width="630" height="240" aria-label="${esc(wd.name)} çizimi"></canvas></div>
+    <div class="bars">${gunStats(wd).map(([n, v]) => `<div class="bar"><span>${n}</span><i><b style="width:${Math.round(v * 100)}%"></b></i></div>`).join('')}</div>
+    <div class="notes">${gunNotes(wd)}</div>`;
+  paintGun($('gunDetail').querySelector('canvas'), sel);
+}
+$('gunTabs').addEventListener('click', e => { const b = e.target.closest('[data-cat]'); if (!b) return; cat = b.dataset.cat; renderTabs(); renderGuns(); });
+$('guns').addEventListener('click', e => {
+  const b = e.target.closest('[data-gun]'); if (!b) return; sel = b.dataset.gun;
+  $('guns').querySelectorAll('.gun').forEach(x => x.setAttribute('aria-pressed', x.dataset.gun === sel)); renderDetail();
+});
+renderTabs(); renderGuns();
+
+/* ---------- maps ---------- */
+const mapCols = ['var(--hazard)', 'var(--green)', 'var(--blue)', 'var(--purple)', 'var(--orange)', 'var(--pink)', 'var(--teal)'];
+$('maps').innerHTML = K.MAPS.map((m, i) => `<article class="plate map"><canvas width="480" height="270" data-map="${m.id}" aria-label="${esc(m.name)} haritası"></canvas>
+  <h3>${esc(m.name)}</h3><div class="tags">${(m.features || []).map((f, k) => `<i style="--c:${mapCols[(i + k) % mapCols.length]}">${esc(f)}</i>`).join('')}</div><p>${esc(m.desc)}</p></article>`).join('');
+$('maps').querySelectorAll('canvas[data-map]').forEach(c => K.mapPreview(c, c.dataset.map));
+
+/* ---------- character builder ---------- */
+const look = { color: 0, hat: 1, face: 0, outfit: 0, gun: 'klasik' };
+const gunsAll = K.WEAPONS.filter(w => !w.locked).map(w => w.id);
+const rows = [['hat', 'Şapka', K.HATS], ['face', 'Yüz', K.FACES], ['outfit', 'Kıyafet', K.OUTFITS], ['gun', 'Silah', null]];
+function renderBuilder() {
+  $('controls').innerHTML = rows.map(([k, label, list]) => `<div class="ctrl"><span>${label}</span>
+    <button type="button" data-k="${k}" data-d="-1" aria-label="Önceki ${label.toLowerCase()}">‹</button>
+    <b>${esc(list ? list[look[k]] : K.WEAP[look.gun].name)}</b>
+    <button type="button" data-k="${k}" data-d="1" aria-label="Sonraki ${label.toLowerCase()}">›</button></div>`).join('') +
+    `<div class="ctrl"><span>Renk</span><div class="swatches">${K.COLORS.map((c, i) => `<button type="button" class="sw" style="--c:${c}" data-color="${i}" aria-label="Renk ${i + 1}" aria-pressed="${i === look.color}"></button>`).join('')}</div></div>
+    <button class="btn yellow" type="button" id="randomLook">Rastgele karakter</button>`;
+  const cv = $('builder'), g = cv.getContext('2d'), s = cv.width / 80;
+  g.clearRect(0, 0, cv.width, cv.height);
+  g.fillStyle = 'rgba(0,0,0,.3)'; g.beginPath(); g.ellipse(cv.width / 2, 72 * s, 20 * s, 4 * s, 0, 0, 7); g.fill();
+  K.drawChar(g, { x: 35 * s, y: 4 * s, scale: 1.82 * s, face: 1, color: K.COLORS[look.color], cos: look, weapon: look.gun });
+}
+$('controls').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.id === 'randomLook') {
+    look.color = Math.floor(Math.random() * K.COLORS.length); look.hat = Math.floor(Math.random() * K.HATS.length);
+    look.face = Math.floor(Math.random() * K.FACES.length); look.outfit = Math.floor(Math.random() * K.OUTFITS.length);
+    look.gun = gunsAll[Math.floor(Math.random() * gunsAll.length)];
+  } else if (b.dataset.color) look.color = +b.dataset.color;
+  else if (b.dataset.k === 'gun') { const i = gunsAll.indexOf(look.gun); look.gun = gunsAll[(i + +b.dataset.d + gunsAll.length) % gunsAll.length]; }
+  else if (b.dataset.k) { const list = { hat: K.HATS, face: K.FACES, outfit: K.OUTFITS }[b.dataset.k]; look[b.dataset.k] = (look[b.dataset.k] + +b.dataset.d + list.length) % list.length; }
+  const focusKey = b.dataset.k ? `[data-k="${b.dataset.k}"][data-d="${b.dataset.d}"]` : b.dataset.color ? `[data-color="${b.dataset.color}"]` : '#randomLook';
+  renderBuilder();
+  const f = $('controls').querySelector(focusKey); if (f) f.focus();
+});
+renderBuilder();
+
+/* ---------- bots ---------- */
+const botCols = { kolay: 'var(--green)', orta: 'var(--blue)', zor: 'var(--orange)', usta: 'var(--red)' };
+$('bots').innerHTML = ['kolay', 'orta', 'zor', 'usta'].map(id => {
+  const d = K.DIFFS[id];
+  const bars = [['Tepki', 1 - d.react / .6], ['Nişan', d.aimTol / 30], ['Kurtulma', d.recover], ['Kaçınma', d.dodge / .8], ['Dinamit', d.nade / .36]];
+  return `<article class="plate bot" style="--c:${botCols[id]}"><h3>${d.name}</h3><div class="bars">${bars.map(([n, v]) => `<div class="bar"><span>${n}</span><i><b style="width:${Math.round(Math.max(.05, Math.min(1, v)) * 100)}%"></b></i></div>`).join('')}</div></article>`;
+}).join('');
+
+/* ---------- campaign & challenges ---------- */
+const roadCols = ['var(--green)', 'var(--blue)', 'var(--purple)', 'var(--orange)', 'var(--pink)', 'var(--teal)', 'var(--red)'];
+$('road').innerHTML = K.CAMPAIGN.map((m, i) => `<div class="stop ${i === K.CAMPAIGN.length - 1 ? 'boss' : ''}"><span class="n" style="--c:${roadCols[i % roadCols.length]}">${i + 1}</span><span>${esc(m.name)}</span></div>`).join('');
+$('chals').innerHTML = K.CHALLENGES.map(c => `<div class="paper chal"><canvas width="168" height="84" ${c.gun ? `data-gun="${c.gun}"` : ''} aria-hidden="true"></canvas><div><b>${esc(c.name)}</b><span>★★★ için ${c.stars[2]} sn</span></div></div>`).join('');
+$('chals').querySelectorAll('canvas').forEach(cv => {
+  if (cv.dataset.gun) return paintGun(cv, cv.dataset.gun);
+  const g = cv.getContext('2d'); g.translate(cv.width / 2, cv.height / 2); g.strokeStyle = '#0b0814'; g.lineWidth = 2;
+  for (let i = 0; i < 3; i++) { g.fillStyle = '#d0342c'; g.beginPath(); g.roundRect ? g.roundRect(-30, -14 + i * 9, 60, 9, 4) : g.rect(-30, -14 + i * 9, 60, 9); g.fill(); g.stroke(); }
+  g.fillStyle = '#1b1b22'; g.fillRect(-5, -15, 10, 29);
+});
+
+/* ---------- phone: QR + copy ---------- */
+try { new QRCode($('qr'), { text: GAME_URL, width: 340, height: 340, colorDark: '#170f36', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); }
+catch (_) { $('qr').textContent = 'Karekod yüklenemedi. Bağlantıyı kopyala.'; }
+$('copy').addEventListener('click', () => {
+  const done = () => { $('copy').textContent = 'Kopyalandı'; setTimeout(() => { $('copy').textContent = 'Kopyala'; }, 1600); };
+  const fallback = () => { const r = document.createRange(); r.selectNodeContents($('link')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $('copy').textContent = 'Seçildi, kopyala'; };
+  try { navigator.clipboard.writeText(GAME_URL).then(done, fallback); } catch (_) { fallback(); }
+});
+
+/* ---------- boot ---------- */
+function boot() {
+  startTour(0);
+  sizeDemo();
+  for (let i = 0; i < 120; i++) K.step(() => ({}));
+  K.render(dctx, dw, dh, ddpr);
+  requestAnimationFrame(frame);
+}
+window.claude && window.claude.hot && window.claude.hot.ready ? window.claude.hot.ready(boot) : boot();
+})();
+</script>
+
+</body></html>
